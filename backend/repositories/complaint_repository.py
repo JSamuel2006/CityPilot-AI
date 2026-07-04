@@ -4,7 +4,7 @@ Complaint repository — all database queries for complaints.
 
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
-from sqlalchemy import func, case, extract
+from sqlalchemy import func, case, extract, text
 
 from database.models import Complaint, ComplaintStatus, Severity
 
@@ -64,8 +64,8 @@ class ComplaintRepository:
                 ).label("resolved"),
             )
             .filter(Complaint.created_at >= cutoff)
-            .group_by(func.date_trunc("day", Complaint.created_at))
-            .order_by(func.date_trunc("day", Complaint.created_at))
+            .group_by(text("day"))
+            .order_by(text("day"))
             .all()
         )
         day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]

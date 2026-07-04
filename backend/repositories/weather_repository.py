@@ -3,7 +3,7 @@ Weather repository — all database queries for weather records.
 """
 
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 from datetime import datetime, timedelta, timezone
 
 from database.models import Weather
@@ -43,8 +43,8 @@ class WeatherRepository:
                 func.max(Weather.precipitation_mm).label("rain"),
             )
             .filter(Weather.recorded_at >= cutoff)
-            .group_by(func.date_trunc("day", Weather.recorded_at))
-            .order_by(func.date_trunc("day", Weather.recorded_at))
+            .group_by(text("day"))
+            .order_by(text("day"))
             .all()
         )
         day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
