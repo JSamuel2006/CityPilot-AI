@@ -38,7 +38,7 @@ class RAGService:
                 content=text,
                 task_type=task_type
             )
-            return [float(x) for x in result.get("embedding", [0.0] * 768)]
+            return [float(x) for x in result.get("embedding", [0.0] * 768)]  # type: ignore
         except Exception as e:
             logger.error(f"Failed to generate embedding for text: {e}")
             return [0.0] * 768
@@ -65,7 +65,7 @@ class RAGService:
 
             elif file_type in ["docx", "doc"]:
                 import docx
-                doc = docx.Document(file_path)
+                doc = docx.Document(str(file_path))
                 paragraphs = [p.text for p in doc.paragraphs if p.text]
                 text_content = "\n".join(paragraphs)
 
@@ -98,15 +98,15 @@ class RAGService:
 
         try:
             # 1. Update status
-            doc.status = "Processing"
+            doc.status = "Processing"  # type: ignore
             db.commit()
 
             # 2. Extract text
-            file_path = Path(doc.file_path)
-            text_content = RAGService.extract_text(file_path, doc.file_type)
+            file_path = Path(str(doc.file_path))
+            text_content = RAGService.extract_text(file_path, str(doc.file_type))
             if not text_content.strip():
                 logger.warning(f"Document {doc.original_filename} is empty.")
-                doc.status = "Empty"
+                doc.status = "Empty"  # type: ignore
                 db.commit()
                 return False
 
@@ -132,13 +132,13 @@ class RAGService:
 
             if db_chunks:
                 db.add_all(db_chunks)
-                doc.status = "Embedded"
-                doc.is_embedded = True
+                doc.status = "Embedded"  # type: ignore
+                doc.is_embedded = True  # type: ignore
                 db.commit()
                 logger.info(f"Successfully stored {len(db_chunks)} chunks for {doc.original_filename}.")
                 return True
             else:
-                doc.status = "Failed"
+                doc.status = "Failed"  # type: ignore
                 db.commit()
                 return False
 
@@ -146,7 +146,7 @@ class RAGService:
             logger.error(f"Failed to process and embed document {doc_id}: {e}")
             db.rollback()
             try:
-                doc.status = f"Error: {str(e)[:50]}"
+                doc.status = f"Error: {str(e)[:50]}"  # type: ignore
                 db.commit()
             except Exception:
                 pass
@@ -176,7 +176,7 @@ class RAGService:
 
         scored_chunks = []
         for chunk in chunks:
-            similarity = RAGService.cosine_similarity(query_embedding, chunk.embedding)
+            similarity = RAGService.cosine_similarity(query_embedding, chunk.embedding)  # type: ignore
             scored_chunks.append({
                 "content": chunk.content,
                 "source": chunk.source_filename,

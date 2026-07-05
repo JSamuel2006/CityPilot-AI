@@ -205,7 +205,7 @@ const CityMap = () => {
   };
 
   return (
-    <div className="space-y-4 fade-in" style={{ height: 'calc(100vh - 96px)' }}>
+    <div className="flex-1 flex flex-col min-h-0 space-y-4 fade-in">
       {/* Header Row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -227,7 +227,7 @@ const CityMap = () => {
       </div>
 
       {/* Main Map + Panel Row */}
-      <div className="flex gap-4 flex-1" style={{ height: 'calc(100% - 64px)' }}>
+      <div className="flex gap-4 flex-1 min-h-0">
         {/* Map Container Wrapper */}
         <div className="flex-1 glass rounded-xl overflow-hidden relative border border-border">
           <MapContainer

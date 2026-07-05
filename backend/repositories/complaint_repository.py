@@ -158,12 +158,12 @@ class ComplaintRepository:
         month_names = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         # Pivot into {month: {category: count}}
-        pivot: dict[int, dict[str, int]] = {}
+        pivot: dict[int, dict] = {}
         for row in rows:
-            m = int(row.month)
+            m = int(row._mapping["month"])
             if m not in pivot:
                 pivot[m] = {"name": month_names[m]}
-            pivot[m][row.category.value.replace(" ", "_")] = row.count
+            pivot[m][row.category.value.replace(" ", "_")] = row._mapping["count"]
 
         return list(pivot.values())
 
@@ -186,7 +186,7 @@ class ComplaintRepository:
                 .group_by(extract("isodow", Complaint.created_at))
                 .all()
             )
-            return {int(r.dow): r.count for r in rows}
+            return {int(r._mapping["dow"]): int(r._mapping["count"]) for r in rows}
 
         this_week = _week_counts(this_week_start, now)
         last_week = _week_counts(last_week_start, this_week_start)

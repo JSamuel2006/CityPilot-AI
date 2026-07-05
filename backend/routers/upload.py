@@ -117,3 +117,65 @@ async def upload_document(
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "execution_time_ms": elapsed,
     }
+
+
+@router.get("/upload/documents")
+def get_all_documents(db: Session = Depends(get_db)):
+    """Retrieve all uploaded knowledge documents."""
+    start = time.perf_counter()
+    docs = KnowledgeRepository.get_all(db)
+    elapsed = round((time.perf_counter() - start) * 1000, 2)
+    return {
+        "success": True,
+        "message": f"Retrieved {len(docs)} documents",
+        "data": [
+            {
+                "id": doc.id,
+                "original_filename": doc.original_filename,
+                "stored_filename": doc.stored_filename,
+                "file_type": doc.file_type,
+                "file_size_bytes": doc.file_size_bytes,
+                "upload_date": doc.upload_date.isoformat() if doc.upload_date else None,
+                "status": doc.status,
+                "is_embedded": doc.is_embedded
+            }
+            for doc in docs
+        ],
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "execution_time_ms": elapsed
+    }
+
+
+@router.delete("/upload/documents/{doc_id}")
+def delete_document(doc_id: int, db: Session = Depends(get_db)):
+    """Delete a document, its database record, and its physical file."""
+    start = time.perf_counter()
+    doc = db.query(KnowledgeDocument).filter(KnowledgeDocument.id == doc_id).first()
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found.")
+
+    # Delete physical file
+    try:
+        if doc.file_path:
+            p = Path(doc.file_path)
+            if p.exists():
+                p.unlink()
+    except Exception as e:
+        logger.error(f"Failed to delete physical file {doc.file_path}: {e}")
+
+    # Delete from DB
+    try:
+        db.delete(doc)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Database deletion failed: {e}")
+
+    elapsed = round((time.perf_counter() - start) * 1000, 2)
+    return {
+        "success": True,
+        "message": f"Document '{doc.original_filename}' deleted successfully",
+        "data": {"id": doc_id},
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "execution_time_ms": elapsed
+    }

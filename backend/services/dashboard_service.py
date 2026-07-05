@@ -23,11 +23,14 @@ class DashboardService:
         available_resources = ResourceRepository.get_available_count(db)
         resources_pct = round(available_resources / max(total_resources, 1) * 100)
 
+        # ── AI Insights ─────────────────────────────────────────────
+        insights = AIService.get_insights(db)
+
         top_cards = {
             "active_complaints": active_complaints,
             "critical_areas": critical_areas,
             "resources_available": resources_pct,
-            "today_ai_insights": 3,  # Placeholder — AI not yet integrated
+            "today_ai_insights": len(insights),
         }
 
         # ── Charts ──────────────────────────────────────────────────
@@ -65,9 +68,6 @@ class DashboardService:
                 "time": time_str,
                 "category": c.category.value,
             })
-
-        # ── AI Insights ─────────────────────────────────────────────
-        insights = AIService.get_insights()
 
         return {
             "top_cards": top_cards,

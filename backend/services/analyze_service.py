@@ -66,6 +66,20 @@ class AnalyzeService:
             
         sources_list = sorted(list(unique_sources))
 
+        # ── Historical complaint trends & stats ─────────────────────
+        severity_dist = ComplaintRepository.get_severity_distribution(db)
+        status_dist = ComplaintRepository.get_status_distribution(db)
+        historical_trend = ComplaintRepository.get_trend_by_day(db, days=7)
+        category_trend = ComplaintRepository.get_category_trend(db, months=6)
+        weekly_comp = ComplaintRepository.get_weekly_comparison(db)
+
+        # ── Predicted hotspots ──────────────────────────────────────
+        from services.map_gis_service import MapGISService
+        try:
+            predicted_hotspots = MapGISService.get_predictions(db)
+        except Exception:
+            predicted_hotspots = []
+
         # ── Build structured context ────────────────────────────────
         context = {
             "query": query,
@@ -76,6 +90,12 @@ class AnalyzeService:
             "knowledge_documents_count": knowledge_count,
             "total_active_complaints": ComplaintRepository.get_active_count(db),
             "total_critical": ComplaintRepository.get_critical_count(db),
+            "severity_distribution": severity_dist,
+            "status_distribution": status_dist,
+            "complaint_trend_7_days": historical_trend,
+            "category_trend_6_months": category_trend,
+            "weekly_comparison": weekly_comp,
+            "predicted_hotspots": predicted_hotspots,
             "retrieved_context": retrieved_text,
             "sources": sources_list,
         }

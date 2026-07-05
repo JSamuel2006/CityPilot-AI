@@ -208,6 +208,16 @@ BASE_LAT = 28.6139
 BASE_LNG = 77.2090
 SPREAD = 0.08  # ~8km spread
 
+# Pre-defined ward center coordinates (spread around base)
+WARD_COORDS = {
+    f"Ward {i}": (
+        round(BASE_LAT + (((i - 1) % 5) - 2) * 0.012, 4),
+        round(BASE_LNG + (((i - 1) // 5) - 2) * 0.012, 4),
+    )
+    for i in range(1, 21)
+}
+
+
 
 def generate_departments(session):
     print(f"  Seeding {len(DEPARTMENT_DATA)} departments...")

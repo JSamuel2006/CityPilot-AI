@@ -129,17 +129,25 @@ class AnalyzeRequest(BaseModel):
 
 
 class AnalyzeResponse(BaseModel):
-    risk_score: int
-    confidence: str
-    evidence: List[str]
-    recommendation: str
-    affected_areas: List[str]
-    priority: str
-    resources_needed: List[str]
-    estimated_cost: str
-    estimated_savings: str
     executive_summary: str
+    risk_score: int
+    confidence: Any  # Can be integer, float, or string (e.g. 95 or "95%")
+    priority_level: str
+    recommendations: List[str]
+    predicted_hotspots: List[Any]  # Can be list of strings or structured dicts
+    affected_wards: List[str]
+    required_resources: List[str]
+    estimated_resolution_time: str
     sources: Optional[List[str]] = []
+
+    # Backward compatibility with existing fields
+    evidence: Optional[List[str]] = []
+    recommendation: Optional[str] = ""
+    affected_areas: Optional[List[str]] = []
+    priority: Optional[str] = ""
+    resources_needed: Optional[List[str]] = []
+    estimated_cost: Optional[str] = ""
+    estimated_savings: Optional[str] = ""
 
 
 
