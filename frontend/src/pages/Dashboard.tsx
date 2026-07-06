@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE } from '../lib/api';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, BarChart, Bar,
@@ -34,7 +35,7 @@ const Dashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/dashboard')
+    fetch(`${API_BASE}/dashboard`)
       .then(res => res.json())
       .then(json => {
         if (json.success && json.data) {

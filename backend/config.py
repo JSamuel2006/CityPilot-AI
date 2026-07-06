@@ -14,12 +14,23 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+psycopg://username:password@localhost:5432/citypilot"
     GEMINI_API_KEY: str = ""
 
+    # ── Security ─────────────────────────────────────────────────────
+    SECRET_KEY: str = "changeme-replace-in-production"
+
     # Connection-pool tuning
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 20
 
+    # ── CORS ─────────────────────────────────────────────────────────
+    # Comma-separated list of allowed origins, or "*" for development.
+    # In production set to your Vercel frontend URL, e.g.:
+    #   CORS_ORIGINS=https://citypilot.vercel.app
+    CORS_ORIGINS: str = "*"
+
     # ── Uploads ─────────────────────────────────────────────────────
-    UPLOAD_DIR: str = "../uploads"
+    # /tmp/uploads works on Render (ephemeral FS) and locally.
+    # For persistent storage switch to a cloud bucket.
+    UPLOAD_DIR: str = "/tmp/uploads"
     MAX_UPLOAD_SIZE_MB: int = 50
     ALLOWED_EXTENSIONS: set[str] = {
         ".pdf", ".doc", ".docx", ".txt", ".csv",

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE } from '../lib/api';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis,
@@ -21,7 +22,7 @@ const Analytics = () => {
   const [data, setData] = useState<AnalyticsData | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/analytics')
+    fetch(`${API_BASE}/analytics`)
       .then(res => res.json())
       .then(json => {
         if (json.success && json.data) {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_BASE } from '../lib/api';
 import { FileText, Download, Loader2, Clock, CheckCircle } from 'lucide-react';
 
 interface ReportType {
@@ -36,7 +37,7 @@ const Reports = () => {
   const generateReport = (type: string) => {
     setLoading(type);
     setGenerated(null);
-    fetch('http://localhost:8000/report', {
+    fetch(`${API_BASE}/report`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type }),

@@ -7,11 +7,12 @@ pydantic-settings
 alembic
 python-multipart
 python-dotenv
-pgvector
 langchain
 langchain-text-splitters
 langchain-google-genai
-google-generativeai
+langchain-community
+google-genai>=1.0
 pypdf
 python-docx
 reportlab
+httpx

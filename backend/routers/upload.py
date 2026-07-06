@@ -4,6 +4,7 @@ Upload router — secure file upload with path traversal prevention.
 
 import time
 import uuid
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from repositories.knowledge_repository import KnowledgeRepository
 
 router = APIRouter()
 settings = get_settings()
+logger = logging.getLogger("citypilot.upload")
 
 
 def _validate_filename(filename: str) -> str:

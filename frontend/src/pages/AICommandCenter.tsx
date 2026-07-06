@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_BASE } from '../lib/api';
 import {
   Search, BrainCircuit, AlertTriangle, ShieldCheck,
   TrendingDown, Target, Zap, FileText, Loader2,
@@ -48,7 +49,7 @@ const AICommandCenter = () => {
     setError(null);
     setResult(null);
 
-    fetch('http://localhost:8000/analyze', {
+    fetch(`${API_BASE}/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: searchQuery }),
@@ -75,7 +76,7 @@ const AICommandCenter = () => {
   };
 
   const downloadReport = () => {
-    fetch('http://localhost:8000/report', {
+    fetch(`${API_BASE}/report`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'Emergency Risk Assessment' }),

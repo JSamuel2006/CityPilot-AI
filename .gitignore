@@ -6,6 +6,7 @@ backend/.venv/
 backend/__pycache__/
 backend/*.pyc
 backend/.env
+backend/.env.local
 
 # Node modules & build outputs
 node_modules/
@@ -13,6 +14,8 @@ dist/
 frontend/node_modules/
 frontend/dist/
 frontend/.env
+frontend/.env.local
+frontend/.env.*.local
 
 # Uploads and temporary files
 backend/uploads/
@@ -30,3 +33,9 @@ downloads/
 *.swp
 .DS_Store
 Thumbs.db
+
+# Python cache and coverage
+*.egg-info/
+.pytest_cache/
+htmlcov/
+.coverage

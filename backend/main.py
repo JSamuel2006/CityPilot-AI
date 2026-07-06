@@ -16,7 +16,10 @@ from dotenv import load_dotenv
 # Load .env before anything else
 load_dotenv()
 
-from routers import dashboard, analyze, map, analytics, report, upload, settings  # noqa: E402
+from config import get_settings  # noqa: E402
+from routers import dashboard, analyze, map, analytics, report, upload, settings as settings_router  # noqa: E402
+
+settings = get_settings()
 
 # ── Logging ─────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -41,11 +44,20 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow React frontend
+# CORS — reads from CORS_ORIGINS env var
+# Set CORS_ORIGINS=https://your-frontend.vercel.app in Render dashboard
+_raw_origins = settings.CORS_ORIGINS.strip()
+if _raw_origins == "*":
+    _allow_origins = ["*"]
+    _allow_credentials = False   # Can't combine "*" with credentials per CORS spec
+else:
+    _allow_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+    _allow_credentials = True
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For development
-    allow_credentials=True,
+    allow_origins=_allow_origins,
+    allow_credentials=_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -84,7 +96,7 @@ app.include_router(map.router, tags=["City Map"])
 app.include_router(analytics.router, tags=["Analytics"])
 app.include_router(report.router, tags=["Reports"])
 app.include_router(upload.router, tags=["Knowledge Base"])
-app.include_router(settings.router, tags=["Settings"])
+app.include_router(settings_router.router, tags=["Settings"])
 
 
 @app.get("/")

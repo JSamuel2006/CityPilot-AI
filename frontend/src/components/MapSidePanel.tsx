@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from '../lib/api';
 import { AlertCircle, Shield, Info, Truck, Radio, Navigation, Clock, User, Compass } from 'lucide-react';
 
 interface ComplaintData {
@@ -87,7 +88,7 @@ export const MapSidePanel: React.FC<MapSidePanelProps> = ({
     }
 
     setLoadingNearby(true);
-    fetch(`http://localhost:8000/map/nearby-resources?lat=${selectedComplaint.lat}&lng=${selectedComplaint.lng}&radius_km=${searchRadius}`)
+    fetch(`${API_BASE}/map/nearby-resources?lat=${selectedComplaint.lat}&lng=${selectedComplaint.lng}&radius_km=${searchRadius}`)
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data) {

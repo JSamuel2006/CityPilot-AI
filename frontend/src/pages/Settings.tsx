@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE } from '../lib/api';
 import { Settings as SettingsIcon, User, Bell, Shield, Database } from 'lucide-react';
 
 interface SystemStatus {
@@ -15,7 +16,7 @@ const Settings = () => {
   const [system, setSystem] = useState<SystemStatus | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/settings')
+    fetch(`${API_BASE}/settings`)
       .then(res => res.json())
       .then(json => {
         if (json.success && json.data) setSystem(json.data);

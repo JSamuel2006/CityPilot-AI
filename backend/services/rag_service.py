@@ -10,7 +10,8 @@ import math
 from pathlib import Path
 from sqlalchemy.orm import Session
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-import google.generativeai as genai
+from google import genai
+from google.genai import types as genai_types
 from config import get_settings
 from database.models import KnowledgeDocument, DocumentChunk
 
@@ -31,14 +32,17 @@ class RAGService:
             return [0.0] * 768
 
         try:
-            genai.configure(api_key=api_key)
-            task_type = "retrieval_query" if is_query else "retrieval_document"
-            result = genai.embed_content(
-                model="models/gemini-embedding-2",
-                content=text,
-                task_type=task_type
+            client = genai.Client(api_key=api_key)
+            task_type = "RETRIEVAL_QUERY" if is_query else "RETRIEVAL_DOCUMENT"
+            result = client.models.embed_content(
+                model="text-embedding-004",
+                contents=text,
+                config=genai_types.EmbedContentConfig(task_type=task_type),
             )
-            return [float(x) for x in result.get("embedding", [0.0] * 768)]  # type: ignore
+            # The new SDK returns an EmbedContentResponse with embeddings list
+            if result.embeddings and len(result.embeddings) > 0:
+                return [float(x) for x in result.embeddings[0].values]
+            return [0.0] * 768
         except Exception as e:
             logger.error(f"Failed to generate embedding for text: {e}")
             return [0.0] * 768
